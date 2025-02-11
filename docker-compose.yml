@@ -1,0 +1,16 @@
+services:
+  nginx:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+      args:
+        - SSL_HOSTNAME=${SSL_HOSTNAME}
+        - EMAIL_ADDRESS=${EMAIL_ADDRESS}
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates
+    ports:
+      - 443:443
