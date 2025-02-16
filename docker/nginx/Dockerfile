@@ -21,5 +21,6 @@ RUN apk upgrade && \
     --agree-tos --dns-route53 --non-interactive --force-renewal
 
 FROM nginx:1.27-alpine3.21
-COPY --from=builder /etc/letsencrypt/live /etc/nginx/certs/live
-COPY --from=builder /etc/letsencrypt/archive /etc/nginx/certs/archive
+ARG CERTBOT_ROOT=/etc/letsencrypt
+COPY --from=builder ${CERTBOT_ROOT}/live ${CERTBOT_ROOT}/live
+COPY --from=builder ${CERTBOT_ROOT}/archive ${CERTBOT_ROOT}/archive
