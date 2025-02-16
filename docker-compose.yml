@@ -1,16 +1,20 @@
 services:
   nginx:
+    image: nginx:1.27-alpine
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: ./docker/nginx/Dockerfile
-      args:
-        - SSL_HOSTNAME=${SSL_HOSTNAME}
-        - EMAIL_ADDRESS=${EMAIL_ADDRESS}
-        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     volumes:
       - ./docker/nginx/templates:/etc/nginx/templates
+      - ./data/certbot:/etc/letsencrypt
     ports:
       - 443:443
+  certbot:
+    image: certbot/dns-route53
+    env_file:
+      - .env
+    command: |
+        certonly -d ${SSL_HOSTNAME} --email ${EMAIL_ADDRESS} --agree-tos
+        --non-interactive --dns-route53
+    volumes:
+      - ./data/certbot:/etc/letsencrypt
+
